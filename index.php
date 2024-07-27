@@ -9,16 +9,27 @@ $sheet = $spreadsheet->getSheet(0);
 $dataXlsx = $sheet->toArray();
 // Function to search for a value in column A and return values from columns B and D
 function searchData($data, $searchValue) {
+    // Normalize the search value by trimming and converting to lowercase
+    $normalizedSearchValue = strtolower(trim($searchValue));
+
     foreach ($data as $row) {
-        if (isset($row[0]) && $row[0] == $searchValue) { // Column A
-            return [
-                'valueB' => $row[1], // Column B
-                'valueD' => $row[3]  // Column D
-            ];
+        if (isset($row[0])) {
+            // Normalize the value in column A by trimming and converting to lowercase
+            $normalizedRowValue = strtolower(trim($row[0]));
+
+            // Use stripos for partial match or similarity
+            if (stripos($normalizedRowValue, $normalizedSearchValue) !== false) {
+                return [
+                    'valueB' => $row[1], // Column B
+                    'valueD' => $row[3]  // Column D
+                ];
+            }
         }
     }
     return null;
 }
+
+
 
 // Get the raw POST data
 $data = file_get_contents("php://input");
